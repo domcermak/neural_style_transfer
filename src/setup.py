@@ -16,6 +16,7 @@ install_reqs = parse_requirements(requirements_file_path)
 setup(
     name="neural_style_transfer",
     version="0.1",
+    python_requires='>=3.9',
     packages=find_packages(include=['neural_style_transfer', 'neural_style_transfer.*']),
     install_requires=install_reqs,
 )
