@@ -1,0 +1,59 @@
+version: '3.7'
+
+services:
+  presentation_app:
+    container_name: 'neural_style_transfer_presentation_app'
+    build:
+      context: .
+      dockerfile: ./docker/presentation_app/Dockerfile
+    ports:
+      - '8501:8501'
+    depends_on:
+      - 'rabbitmq'
+    environment:
+      NST_ENV: 'production'
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    networks:
+      - neural_style_transfer_network
+
+  upload_app:
+    container_name: 'neural_style_transfer_upload_app'
+    build:
+      context: .
+      dockerfile: ./docker/upload_app/Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - 'rabbitmq'
+    environment:
+      NST_ENV: 'production'
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    networks:
+      - neural_style_transfer_network
+
+  neural_worker:
+    container_name: 'neural_style_transfer_neural_worker'
+    build:
+      context: .
+      dockerfile: ./docker/neural_worker/Dockerfile
+    depends_on:
+      - 'rabbitmq'
+    environment:
+      NST_ENV: 'production'
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    networks:
+      - neural_style_transfer_network
+
+  rabbitmq:
+    container_name: 'neural_style_transfer_rabbitmq'
+    image: 'rabbitmq:3.6-management-alpine'
+    ports:
+      - '5672:5672' # The standard AMQP protocol port
+      - '15672:15672' # HTTP management UI
+    command:
+      - 'rabbitmq-server'
+    networks:
+      - neural_style_transfer_network
+
+networks:
+  neural_style_transfer_network: {}
