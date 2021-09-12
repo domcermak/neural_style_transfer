@@ -10,6 +10,7 @@ services:
       - '8501:8501'
     depends_on:
       - 'rabbitmq'
+      - 'postgres'
     environment:
       NST_ENV: 'production'
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
@@ -38,6 +39,7 @@ services:
       dockerfile: ./docker/neural_worker/Dockerfile
     depends_on:
       - 'rabbitmq'
+      - 'postgres'
     environment:
       NST_ENV: 'production'
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
@@ -52,6 +54,24 @@ services:
       - '15672:15672' # HTTP management UI
     command:
       - 'rabbitmq-server'
+    networks:
+      - neural_style_transfer_network
+
+  postgres:
+    container_name: 'neural_style_transfer_postgres'
+    image: postgres:11.9-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./db/structure.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
       - neural_style_transfer_network
 
