@@ -21,7 +21,7 @@ CREATE TABLE public.image_batches
     id              integer                     NOT NULL,
     content_image   bytea                       NOT NULL,
     style_image     bytea                       NOT NULL,
-    generated_image bytea                       NOT NULL,
+    generated_image bytea,
     processed_at    timestamp without time zone,
     created_at      timestamp without time zone NOT NULL,
     updated_at      timestamp without time zone NOT NULL
@@ -30,9 +30,10 @@ CREATE TABLE public.image_batches
 
 CREATE TABLE public.image_batch_training_iteration_samples
 (
-    id              integer NOT NULL,
-    image_batch_id  integer NOT NULL,
-    generated_image bytea   NOT NULL
+    id              integer                     NOT NULL,
+    image_batch_id  integer                     NOT NULL,
+    generated_image bytea                       NOT NULL,
+    created_at      timestamp without time zone NOT NULL
 );
 
 

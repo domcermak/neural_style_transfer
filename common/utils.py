@@ -1,5 +1,6 @@
 import os
 import pika
+import psycopg2 as pg
 
 
 def rabbit_connect_and_make_channel():
@@ -12,3 +13,13 @@ def rabbit_connect_and_make_channel():
     connection = pika.BlockingConnection(parameters=parameters)
 
     return connection, connection.channel()
+
+
+def pg_connect_and_make_cursor():
+    connection = pg.connect(
+        host="localhost",
+        database="postgres",
+        user="postgres",
+        password="postgres")
+
+    return connection, connection.cursor()
