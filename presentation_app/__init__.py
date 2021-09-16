@@ -5,7 +5,7 @@ import streamlit as st
 import json
 from PIL import Image
 import numpy as np
-from common.utils import rabbit_connect_and_make_channel
+from common.utils import rabbit_connect_and_make_channel, is_production
 import threading
 
 if 'render_now' not in st.session_state:
@@ -63,10 +63,8 @@ def fetch_qr_code_image():
 
 
 def main():
-    # Hides the top right hamburger menu
-    # uncomment when the app is deployed
-    #
-    # hideAdminHamburgerMenu()
+    if is_production():
+        hideAdminHamburgerMenu()
 
     st.set_page_config(page_title='Neural Style Transfer', layout='wide', page_icon=None)  # we could add one
     st.title('Zpracování Vámi nahraných obrázků v reálném čase')

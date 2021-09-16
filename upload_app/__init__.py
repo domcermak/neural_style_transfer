@@ -3,7 +3,7 @@ import streamlit as st
 from screens import display_upload_screen
 import json
 import numpy as np
-from common.utils import rabbit_connect_and_make_channel
+from common.utils import rabbit_connect_and_make_channel, is_production
 
 if 'rabbitmq_channel' not in st.session_state:
     connection, channel = rabbit_connect_and_make_channel()
@@ -33,10 +33,8 @@ def add_to_process_queue(content_image, style_image):
 
 
 def main():
-    # Hides the top right hamburger menu
-    # uncomment when the app is deployed
-    #
-    # hideAdminHamburgerMenu()
+    if is_production():
+        hideAdminHamburgerMenu()
 
     st.set_page_config(page_title='Neural Style Transfer', page_icon=None)  # we could add one
     st.header('Neural Style Transfer')

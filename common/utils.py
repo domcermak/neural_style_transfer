@@ -14,6 +14,11 @@ def rabbit_connect_and_make_channel():
 
     return connection, connection.channel()
 
+def is_production():
+    try:
+        return os.environ['NST_ENV'] == 'production'
+    except KeyError:
+        False
 
 def pg_connect_and_make_cursor():
     connection = pg.connect(
