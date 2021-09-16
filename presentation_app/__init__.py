@@ -1,4 +1,5 @@
 import logging as log
+import pathlib
 import time
 import streamlit as st
 import json
@@ -9,6 +10,9 @@ import threading
 
 if 'render_now' not in st.session_state:
     st.session_state['render_now'] = []
+
+if 'qr_code' not in st.session_state:
+    st.session_state['qr_code'] = None
 
 
 def hideAdminHamburgerMenu():
@@ -46,6 +50,14 @@ def run_subscription():
     channel.start_consuming()
 
 
+def fetch_qr_code_image():
+    try:
+        path = pathlib.Path(__file__).parent.parent.joinpath('qr-code.png').absolute()
+        return Image.open(path)
+    except:
+        return None
+
+
 def main():
     # Hides the top right hamburger menu
     # uncomment when the app is deployed
@@ -61,6 +73,15 @@ def main():
     th.join(0)
 
     while True:
+        if st.session_state['qr_code'] is None:
+            log.debug("fetching qr code")
+            image = fetch_qr_code_image()
+            if image is not None:
+                log.info("qr code fetched")
+                st.sidebar.header('Naskenujte pro zadání obrázku ke zpracování')
+                st.sidebar.image(image=image)
+                st.session_state['qr_code'] = image
+
         render_now = st.session_state['render_now']
         if len(render_now) > 0:
             log.debug('rendering')
