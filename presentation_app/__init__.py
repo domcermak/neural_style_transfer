@@ -28,16 +28,20 @@ def subscribe_callback(_ch, _method, _properties, body):
     parsed_body = json.loads(body)
     content_image = Image.fromarray(np.array(parsed_body['content_image'], dtype='uint8'))
     style_image = Image.fromarray(np.array(parsed_body['style_image'], dtype='uint8'))
+    generated_image = Image.fromarray(np.array(parsed_body['generated_image'], dtype='uint8'))
 
     log.debug('adding images')
-    st.session_state['render_now'] = [content_image, style_image]
+    st.session_state['render_now'].append({
+        'content_image': content_image,
+        'style_image': style_image,
+        'generated_image': generated_image,
+    })
     log.debug('!!!! added !!!!')
 
 
 def run_subscription():
     if 'rabbitmq_channel' not in st.session_state:
         connection, channel = rabbit_connect_and_make_channel()
-        channel.queue_declare(queue='nst_to_be_process')
         channel.queue_declare(queue='nst_processed')
 
         st.session_state['rabbitmq_channel'] = channel
@@ -64,8 +68,17 @@ def main():
     #
     # hideAdminHamburgerMenu()
 
-    st.set_page_config(page_title='Neural Style Transfer', page_icon=None)  # we could add one
-    st.header('Zpracování Vámi nahraných fotek v reálném čase')
+    st.set_page_config(page_title='Neural Style Transfer', layout='wide', page_icon=None)  # we could add one
+    st.title('Zpracování Vámi nahraných obrázků v reálném čase')
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    col1.header('Originální obrázek')
+    col2.header('Vybraná malba')
+    col3.header('Generovaný obrázek')
+
+    col1_placeholder = col1.empty()
+    col2_placeholder = col2.empty()
+    col3_placeholder = col3.empty()
 
     th = threading.Thread(target=run_subscription)
     st.report_thread.add_report_ctx(th)
@@ -84,10 +97,19 @@ def main():
 
         render_now = st.session_state['render_now']
         if len(render_now) > 0:
-            log.debug('rendering')
-            st.image(render_now)
-            log.debug('rendered')
             st.session_state['render_now'] = []
+            for images in render_now:
+                col1_placeholder.empty()
+                col2_placeholder.empty()
+                col3_placeholder.empty()
+
+                log.debug('rendering')
+                col1_placeholder.image(images['content_image'], use_column_width=True)
+                col2_placeholder.image(images['generated_image'], use_column_width=True)
+                col3_placeholder.image(images['style_image'], use_column_width=True)
+                log.debug('rendered')
+
+                time.sleep(5)
 
         time.sleep(1)
 
