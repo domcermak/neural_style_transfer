@@ -71,8 +71,8 @@ def main():
 
     col1, col2, col3 = st.columns([1, 2, 1])
     col1.header('Originální obrázek')
-    col2.header('Vybraná malba')
-    col3.header('Generovaný obrázek')
+    col2.header('Generovaný obrázek')
+    col3.header('Vybraná malba')
 
     col1_placeholder = col1.empty()
     col2_placeholder = col2.empty()
