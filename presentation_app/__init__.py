@@ -69,7 +69,7 @@ def main():
     st.set_page_config(page_title='Neural Style Transfer', layout='wide', page_icon=None)  # we could add one
     st.title('Zpracování Vámi nahraných obrázků v reálném čase')
 
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 1.5, 1])
     col1.header('Originální obrázek')
     col2.header('Generovaný obrázek')
     col3.header('Vybraná malba')
