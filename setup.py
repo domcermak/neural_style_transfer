@@ -10,7 +10,7 @@ def parse_requirements(filename):
     return [line for line in line_iter if line and not line.startswith("#")]
 
 
-requirements_file_path = str(Path(__file__).absolute().parent.parent) + '/requirements.txt'
+requirements_file_path = str(Path(__file__).absolute().parent) + '/requirements.txt'
 install_reqs = parse_requirements(requirements_file_path)
 
 setup(
