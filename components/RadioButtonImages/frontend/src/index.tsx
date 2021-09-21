@@ -1,10 +1,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import MyComponent from "./MyComponent"
+import RadioButtonImages from "./RadioButtonImages"
 
 ReactDOM.render(
   <React.StrictMode>
-    <MyComponent />
+    <RadioButtonImages />
   </React.StrictMode>,
   document.getElementById("root")
 )
