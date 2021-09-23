@@ -1,7 +1,8 @@
 import json
 from PIL import Image
 import numpy as np
-from neural_style_transfer import process
+from arbitrary_style_transfer import process
+# from neural_style_transfer import process
 from common.utils import rabbit_connect_and_make_channel, pg_connect_and_make_cursor
 from datetime import datetime, timezone
 
