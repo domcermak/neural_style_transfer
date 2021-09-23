@@ -67,16 +67,16 @@ def main():
         hideAdminHamburgerMenu()
 
     st.set_page_config(page_title='Neural Style Transfer', layout='wide', page_icon=None)  # we could add one
-    st.title('Zpracování Vámi nahraných obrázků v reálném čase')
+    st.title('Malba z fotky pomocí umělé inteligence')
 
-    col1, col2, col3 = st.columns([1, 1.5, 1])
-    col1.header('Originální obrázek')
-    col2.header('Generovaný obrázek')
-    col3.header('Vybraná malba')
+    col1, _, col2 = st.columns([1, .5, 2])
 
-    col1_placeholder = col1.empty()
+    col1.header('Vybrané obrázky')
+    col2.header('Výsledná malba')
+    col1_placeholder1 = col1.empty()
+    col1_placeholder2 = col1.empty()
+    col1_placeholder3 = col1.empty()
     col2_placeholder = col2.empty()
-    col3_placeholder = col3.empty()
 
     th = threading.Thread(target=run_subscription)
     st.report_thread.add_report_ctx(th)
@@ -88,8 +88,12 @@ def main():
             log.debug("fetching qr code")
             image = fetch_qr_code_image()
             if image is not None:
+                st.sidebar.markdown('<div style="display: block; margin-top: 25rem"></div>', unsafe_allow_html=True)
                 log.info("qr code fetched")
-                st.sidebar.header('Naskenujte pro zadání obrázku ke zpracování')
+                st.sidebar.title('1. Naskenujte QR kód')
+                st.sidebar.title('2. Vyberte nebo vyfoťte obrázek, ze kterého chcete vytvořil malbu')
+                st.sidebar.title('3. Vyberte obrázek ze kterého má být použitý styl výsledné malby')
+                st.sidebar.title('4. Sledujte prezentaci')
                 st.sidebar.image(image=image)
                 st.session_state['qr_code'] = image
 
@@ -97,14 +101,17 @@ def main():
         if len(render_now) > 0:
             st.session_state['render_now'] = []
             for images in render_now:
-                col1_placeholder.empty()
+                col1_placeholder1.empty()
+                col1_placeholder2.empty()
+                col1_placeholder3.empty()
                 col2_placeholder.empty()
-                col3_placeholder.empty()
 
                 log.debug('rendering')
-                col1_placeholder.image(images['content_image'], use_column_width=True)
+                col1_placeholder1.image(images['content_image'], use_column_width=True)
+                col1_placeholder2.markdown("<h1 style='text-align: center; color: white;'>+</h1>",
+                                           unsafe_allow_html=True)
+                col1_placeholder3.image(images['style_image'], use_column_width=True)
                 col2_placeholder.image(images['generated_image'], use_column_width=True)
-                col3_placeholder.image(images['style_image'], use_column_width=True)
                 log.debug('rendered')
 
                 time.sleep(5)
