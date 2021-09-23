@@ -187,3 +187,7 @@ fabric.properties
 
 # Project specific
 qr-code.png
+/components/**/frontend/build/
+/components/**/frontend/node_modules/
+/components/**/examples/
+

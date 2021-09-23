@@ -36,15 +36,15 @@ def main():
     if is_production():
         hideAdminHamburgerMenu()
 
-    st.set_page_config(page_title='Neural Style Transfer', page_icon=None)  # we could add one
-    st.header('Neural Style Transfer')
+    st.set_page_config(page_title='Umění pomocí umělé inteligence', page_icon=None)  # we could add one
+    st.header('Umění pomocí umělé inteligence')
     if 'state' not in st.session_state:
         st.session_state['state'] = 'upload'
 
     if st.session_state['state'] == 'wait':
         st.success('Vybrané obrázky byly přidány do zpracování. Nyní sledujte prezentaci.')
 
-        if st.button("Nahrát další obrázky"):
+        if st.button("Nahrát další obrázek"):
             st.session_state['state'] = 'upload'
             st.experimental_rerun()
 

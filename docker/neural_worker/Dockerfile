@@ -12,6 +12,7 @@ COPY ./common /common
 RUN apt-get update -y
 RUN apt-get install -y python3.9
 RUN apt-get install -y python3-pip
+RUN apt-get install -y libpq-dev
 RUN apt-get install -y make
 RUN python3 -m pip install pathlib
 RUN make install

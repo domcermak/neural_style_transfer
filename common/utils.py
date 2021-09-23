@@ -2,6 +2,7 @@ import os
 import pika
 import psycopg2 as pg
 
+IMAGE_SHAPE = (256, 256)
 
 def rabbit_connect_and_make_channel():
     try:
