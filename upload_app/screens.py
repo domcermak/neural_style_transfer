@@ -21,10 +21,12 @@ def __select_filter():
     images = [image.resize(IMAGE_SHAPE) for image in images]
     option_labels = [f"{x} - {labels[x - 1]}" for x in range(1, len(images) + 1)]
 
-    st.caption('Níže vyberte Malbu:')
-    st.image(images, caption=option_labels, width=200)
-    option = st.radio("Vyberte styl:", options=option_labels)
-    if st.button('Potvrdit výběr a odeslat ke zpracování'):
+    st.caption('Níže vyberte malbu jako vzor stylu:')
+    col1, col2 = st.columns(2)
+    col1.image(images, caption=option_labels, width=100)
+
+    option = col2.radio("Vyberte malbu:", options=option_labels)
+    if col2.button('Potvrdit výběr a odeslat ke zpracování'):
         print(f"selected {option}")
         return images[int(option.split(' ')[0]) - 1]
 
