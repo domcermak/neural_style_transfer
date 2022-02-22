@@ -5,7 +5,7 @@ LABEL version="0.1"
 EXPOSE 8080
 
 COPY ./Makefile /
-COPY ./requirements.txt /
+COPY ./requirements/upload_app/requirements.txt /
 COPY ./setup.py /
 COPY ./upload_app /upload_app
 COPY ./data /data

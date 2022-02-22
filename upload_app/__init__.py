@@ -33,11 +33,12 @@ def add_to_process_queue(content_image, style_image):
 
 
 def main():
+    st.set_page_config(page_title='Umění pomocí umělé inteligence', page_icon=None)  # we could add one
+    st.header('Umění pomocí umělé inteligence')
+
     if is_production():
         hideAdminHamburgerMenu()
 
-    st.set_page_config(page_title='Umění pomocí umělé inteligence', page_icon=None)  # we could add one
-    st.header('Umění pomocí umělé inteligence')
     if 'state' not in st.session_state:
         st.session_state['state'] = 'upload'
 

@@ -63,13 +63,13 @@ def fetch_qr_code_image():
 
 
 def main():
-    if is_production():
-        hideAdminHamburgerMenu()
-
     st.set_page_config(page_title='Neural Style Transfer', layout='wide', page_icon=None)  # we could add one
     st.title('Malba z fotky pomocí umělé inteligence')
 
-    col1, _, col2 = st.columns([1, .5, 2])
+    if is_production():
+        hideAdminHamburgerMenu()
+
+    col1, _, col2 = st.columns([1, .2, 2])
 
     col1.header('Vybrané obrázky')
     col2.header('Výsledná malba')
@@ -88,7 +88,7 @@ def main():
             log.debug("fetching qr code")
             image = fetch_qr_code_image()
             if image is not None:
-                st.sidebar.markdown('<div style="display: block; margin-top: 25rem"></div>', unsafe_allow_html=True)
+                st.sidebar.markdown('<div style="display: block; margin-top: 10rem"></div>', unsafe_allow_html=True)
                 log.info("qr code fetched")
                 st.sidebar.title('1. Naskenujte QR kód')
                 st.sidebar.title('2. Vyberte nebo vyfoťte obrázek, ze kterého chcete vytvořil malbu')

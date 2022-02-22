@@ -7,15 +7,19 @@ services:
       context: .
       dockerfile: ./docker/presentation_app/Dockerfile
     ports:
-      - '8501:8501'
+      - '8051:8051'
     depends_on:
       - 'rabbitmq'
       - 'postgres'
     environment:
       NST_ENV: 'production'
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      PYTHONPATH: '/'
+      PG_HOST: 'postgres' # https://docs.docker.com/compose/networking/
     networks:
       - neural_style_transfer_network
+    links: # https://docs.docker.com/compose/networking/
+      - postgres
 
   upload_app:
     container_name: 'neural_style_transfer_upload_app'
@@ -29,8 +33,12 @@ services:
     environment:
       NST_ENV: 'production'
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      PYTHONPATH: '/'
+      PG_HOST: 'postgres' # https://docs.docker.com/compose/networking/
     networks:
       - neural_style_transfer_network
+    links: # https://docs.docker.com/compose/networking/
+      - postgres
 
   neural_worker:
     container_name: 'neural_style_transfer_neural_worker'
@@ -43,8 +51,12 @@ services:
     environment:
       NST_ENV: 'production'
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      PYTHONPATH: '/'
+      PG_HOST: 'postgres' # https://docs.docker.com/compose/networking/
     networks:
       - neural_style_transfer_network
+    links: # https://docs.docker.com/compose/networking/
+      - postgres
 
   rabbitmq:
     container_name: 'neural_style_transfer_rabbitmq'

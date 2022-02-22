@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 LABEL version="0.1"
 
 COPY ./Makefile /
-COPY ./requirements.txt /
+COPY ./requirements/neural_worker/requirements.txt /
 COPY ./setup.py /
 COPY ./neural_worker /neural_worker
 COPY ./data /data
