@@ -1,4 +1,4 @@
-.PHONY: run install run_presentation_app run_upload_app run_neural_worker serve
+.PHONY: run install run_presentation_app run_upload_app run_neural_worker serve live
 
 run :
 	docker-compose up
@@ -19,3 +19,7 @@ run_neural_worker :
 
 serve :
 	ngrok http 8080
+
+live :
+	open http://localhost:8080
+	open http://localhost:8051
