@@ -1,12 +1,13 @@
 import os
 import streamlit.components.v1 as components
+import base64
 
 __parent_dir = os.path.dirname(os.path.abspath(__file__))
 __build_dir = os.path.join(__parent_dir, "frontend/build")
 __component_func = components.declare_component("RadioButtonImages", path=__build_dir)
 
 
-def choose(caption, key=None):
+def choose_from_images(image_paths, labels, size=200, key=None):
     """Create a new instance of "RadioButtonImages".
 
     Parameters
@@ -36,11 +37,20 @@ def choose(caption, key=None):
     # convert images to base64:
     #   -> https://github.com/streamlit/streamlit/issues/1566#issue-637190487
     #   -> https://stackoverflow.com/questions/8499633/how-to-display-base64-images-in-html
+    assert len(image_paths) == len(labels)
 
-    component_value = __component_func(caption=caption,
+    base64_jpgs = []
+    for path in image_paths:
+        with open(path, "rb") as image:
+            encoded = base64.b64encode(image.read()).decode()
+            base64_jpgs.append(f"data:image/jpg;base64,{encoded}")
+
+    component_value = __component_func(base64_jpgs=base64_jpgs,
+                                       labels=labels,
+                                       size=size,
                                        key=key,
                                        default=0)
 
     # We could modify the value returned from the component if we wanted.
     # There's no need to do this in our simple example - but it's an option.
-    return component_value
+    return int(component_value)

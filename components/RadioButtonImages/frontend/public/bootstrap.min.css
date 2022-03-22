@@ -229,7 +229,31 @@ textarea {
 }
 button,
 input {
-  overflow: visible;
+  visibility: hidden;
+}
+input[type="radio"] + label .checkmark {
+  display: none;
+}
+input[type="radio"]:checked + label .checkmark {
+  display: block;
+}
+input[type="radio"] + label {
+  position: relative;
+}
+.checkmark {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  max-width: 3em;
+  height: auto;
+}
+.checkmark path {
+  fill: #1c7430;
+}
+.button-set-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 button,
 select {
