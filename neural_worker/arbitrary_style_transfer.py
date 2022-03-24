@@ -6,7 +6,7 @@ from common.utils import IMAGE_SHAPE
 print("TF Version: ", tf.__version__)
 print("TF-Hub version: ", hub.__version__)
 print("Eager mode enabled: ", tf.executing_eagerly())
-print("GPU available: ", tf.test.is_gpu_available())
+print("GPU available: ", tf.config.list_physical_devices('GPU'))
 
 print('loading hub')
 hub_handle = 'https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2'

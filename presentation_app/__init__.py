@@ -2,17 +2,32 @@ import logging as log
 import pathlib
 import time
 import streamlit as st
-import json
 from PIL import Image
-import numpy as np
-from common.utils import rabbit_connect_and_make_channel, is_production
-import threading
-
-if 'render_now' not in st.session_state:
-    st.session_state['render_now'] = []
+from common.utils import (
+    is_production,
+    pg_connect_and_make_cursor,
+    insert_into_sessions,
+    select_unpresented_images,
+)
+import uuid
 
 if 'qr_code' not in st.session_state:
     st.session_state['qr_code'] = None
+
+if 'psql_connection' not in st.session_state:
+    pg_connection, pg_cursor = pg_connect_and_make_cursor()
+
+    st.session_state['psql_connection'] = {
+        'cursor': pg_cursor,
+        'conn': pg_connection,
+    }
+
+PG_CURSOR = st.session_state['psql_connection']['cursor']
+
+if 'uuid' not in st.session_state:
+    uuid = str(uuid.uuid4())
+    st.session_state['uuid'] = uuid
+    insert_into_sessions(PG_CURSOR, uuid, 'presentation')
 
 
 def hideAdminHamburgerMenu():
@@ -20,38 +35,6 @@ def hideAdminHamburgerMenu():
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     </style> """, unsafe_allow_html=True)
-
-
-def subscribe_callback(_ch, _method, _properties, body):
-    log.debug('subscribed')
-
-    parsed_body = json.loads(body)
-    content_image = Image.fromarray(np.array(parsed_body['content_image'], dtype='uint8'))
-    style_image = Image.fromarray(np.array(parsed_body['style_image'], dtype='uint8'))
-    generated_image = Image.fromarray(np.array(parsed_body['generated_image'], dtype='uint8'))
-
-    log.debug('adding images')
-    st.session_state['render_now'].append({
-        'content_image': content_image,
-        'style_image': style_image,
-        'generated_image': generated_image,
-    })
-    log.debug('!!!! added !!!!')
-
-
-def run_subscription():
-    if 'rabbitmq_channel' not in st.session_state:
-        connection, channel = rabbit_connect_and_make_channel()
-        channel.queue_declare(queue='nst_processed')
-
-        st.session_state['rabbitmq_channel'] = channel
-    else:
-        channel = st.session_state['rabbitmq_channel']
-
-    channel.basic_consume(queue='nst_processed',
-                          on_message_callback=subscribe_callback,
-                          auto_ack=True)
-    channel.start_consuming()
 
 
 def fetch_qr_code_image():
@@ -78,14 +61,9 @@ def main():
     col1_placeholder3 = col1.empty()
     col2_placeholder = col2.empty()
 
-    th = threading.Thread(target=run_subscription)
-    st.report_thread.add_report_ctx(th)
-    th.start()
-    th.join(0)
-
     while True:
         if st.session_state['qr_code'] is None:
-            log.debug("fetching qr code")
+            log.info("fetching qr code")
             image = fetch_qr_code_image()
             if image is not None:
                 st.sidebar.markdown('<div style="display: block; margin-top: 10rem"></div>', unsafe_allow_html=True)
@@ -97,10 +75,10 @@ def main():
                 st.sidebar.image(image=image)
                 st.session_state['qr_code'] = image
 
-        render_now = st.session_state['render_now']
-        if len(render_now) > 0:
-            st.session_state['render_now'] = []
-            for images in render_now:
+        session_uuid = st.session_state['uuid']
+        rows = select_unpresented_images(PG_CURSOR, session_uuid)
+        if len(rows) > 0:
+            for images in rows:
                 col1_placeholder1.empty()
                 col1_placeholder2.empty()
                 col1_placeholder3.empty()
