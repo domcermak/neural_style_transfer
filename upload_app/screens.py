@@ -1,3 +1,5 @@
+import io
+
 import streamlit as st
 from PIL import Image
 from pathlib import Path
@@ -52,3 +54,18 @@ def display_upload_screen():
         content_image = Image.open(uploaded_file)
 
         return __resize_and_crop_image(content_image), __select_filter()
+
+
+def display_download_screen(images):
+    cols = st.columns([1, 1, 1])
+    for i, image in enumerate(images):
+        buffer = io.BytesIO()
+        image.save(buffer, format='JPEG')
+
+        cols[i % 3].image(image, use_column_width='always')
+        cols[i % 3].download_button(
+            label="Stáhnout obrázek",
+            data=buffer,
+            file_name="image.jpeg",
+            mime="image/jpeg"
+        )

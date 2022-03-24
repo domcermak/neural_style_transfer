@@ -1,6 +1,8 @@
 import logging as log
+import time
+
 import streamlit as st
-from screens import display_upload_screen
+from screens import display_upload_screen, display_download_screen
 import json
 import numpy as np
 from common.utils import (
@@ -9,6 +11,8 @@ from common.utils import (
     pg_connect_and_make_cursor,
     insert_into_sessions,
     insert_into_scheduled_images,
+    any_image_ready_to_download,
+    select_images_to_download,
 )
 import uuid
 
@@ -71,7 +75,17 @@ def main():
             st.session_state['state'] = 'upload'
             st.experimental_rerun()
 
-    else:
+        while True:
+            if any_image_ready_to_download(PG_CURSOR, st.session_state['uuid']):
+                break
+            time.sleep(1)
+
+        st.success('Vámi zadané obrázky jsou připravené ke stažení')
+        if st.button("Stáhnout vygenerovaný obrázek"):
+            st.session_state['state'] = 'download'
+            st.experimental_rerun()
+
+    elif st.session_state['state'] == 'upload':
         images = display_upload_screen()
         if images is not None:
             log.info('images uploaded')
@@ -80,6 +94,15 @@ def main():
                 add_to_process_queue(content_image, style_image)
                 st.session_state['state'] = 'wait'
                 st.experimental_rerun()
+
+    elif st.session_state['state'] == 'download':
+        images = select_images_to_download(PG_CURSOR, st.session_state['uuid'])
+        display_download_screen(images)
+
+        st.text("")
+        if st.button("Nahrát další obrázek"):
+            st.session_state['state'] = 'upload'
+            st.experimental_rerun()
 
 
 if __name__ == '__main__':

@@ -156,6 +156,48 @@ def select_unpresented_images(cursor, presentation_session_uuid):
     return images
 
 
+def any_image_ready_to_download(cursor, user_uuid):
+    cursor.execute(
+        """
+        select count(gi.id) 
+        from 
+            public.sessions as ss join public.scheduled_images si on ss.id = si.user_session_id
+            join public.processed_images pi on si.id = pi.scheduled_image_id
+            join public.generated_images gi on gi.id = pi.generated_image_id
+        where ss.uuid = %s and ss.type = 'user'
+        group by gi.id;
+        """,
+        (user_uuid,)
+    )
+    try:
+        count = cursor.fetchone()[0]
+    except TypeError:
+        count = 0
+
+    return count > 0
+
+
+def select_images_to_download(cursor, user_uuid):
+    cursor.execute(
+        """
+        select gi.id, gi.generated_image
+        from 
+            public.sessions as ss join public.scheduled_images si on ss.id = si.user_session_id
+            join public.processed_images pi on si.id = pi.scheduled_image_id
+            join public.generated_images gi on gi.id = pi.generated_image_id
+        where ss.uuid = %s and ss.type = 'user'
+        group by gi.id, gi.generated_image;
+        """,
+        (user_uuid,)
+    )
+    rows = cursor.fetchall()
+    images = []
+    for row in rows:
+        image = __decode_img(row[1])
+        images.append(image)
+
+    return images
+
 def pg_connect_and_make_cursor():
     connection = pg.connect(
         host=__pg_host(),
