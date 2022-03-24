@@ -20,19 +20,13 @@ def subscribe_callback(_ch, _method, _properties, body):
     parsed_body = json.loads(body)
     scheduled_image_id = parsed_body['scheduled_image_id']
     content_image, style_image = select_scheduled_image(pg_cursor, scheduled_image_id)
-    print("selected")
-
-    # content_image = Image.fromarray(np.array(parsed_body['content_image'], dtype='uint8'))
-    # style_image = Image.fromarray(np.array(parsed_body['style_image'], dtype='uint8'))
     generated_image = process(content_image, style_image)
-    print("processed")
     insert_into_processed_images(pg_cursor, Image.fromarray(generated_image), scheduled_image_id)
 
-    print("inserted")
+    print("processed")
 
 
 def main():
-    print('starting')
     rabbitmq_channel.basic_consume(queue='nst_to_be_process',
                                    on_message_callback=subscribe_callback,
                                    auto_ack=True)
@@ -42,5 +36,4 @@ def main():
 if __name__ == '__main__':
     print('starting')
     main()
-    # connection.close()
     print('quitting...')

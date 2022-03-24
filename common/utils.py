@@ -175,8 +175,6 @@ def __encode_img(img):
 
 
 def __decode_img(binary):
-    print("binary", binary)
-
     return Image.open(io.BytesIO(binary))
 
 

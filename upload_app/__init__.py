@@ -35,6 +35,7 @@ if 'uuid' not in st.session_state:
     st.session_state['uuid'] = uuid
     insert_into_sessions(PG_CURSOR, uuid, 'user')
 
+
 def hideAdminHamburgerMenu():
     st.markdown(""" <style>
     #MainMenu {visibility: hidden;}
@@ -84,5 +85,4 @@ def main():
 if __name__ == '__main__':
     log.info('starting')
     main()
-    # connection.close()
     log.info('quitting...')

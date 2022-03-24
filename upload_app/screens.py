@@ -21,7 +21,7 @@ def __load_style_image_paths_and_labels():
 def __select_filter():
     st.caption('Níže vyberte malbu jako vzor stylu:')
     image_paths, labels = __load_style_image_paths_and_labels()
-    option = choose_from_images(image_paths, labels, size=200)
+    option = choose_from_images(image_paths, labels, size=150)
 
     _, center_col, _ = st.columns([.7, 1, .7])
     if center_col.button('Potvrdit výběr a odeslat ke zpracování'):
