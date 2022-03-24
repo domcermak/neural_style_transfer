@@ -23,15 +23,32 @@ def __select_filter():
     image_paths, labels = __load_style_image_paths_and_labels()
     option = choose_from_images(image_paths, labels, size=200)
 
-    _, center_col, _ = st.columns([1, 1, 1])
+    _, center_col, _ = st.columns([.7, 1, .7])
     if center_col.button('Potvrdit výběr a odeslat ke zpracování'):
         print(f"selected {option}")
-        return Image.open(image_paths[option])
+        return Image.open(image_paths[option]).resize(IMAGE_SHAPE)
+
+
+def __resize_and_crop_image(image):
+    # resize with aspect ratio
+    image.thumbnail(IMAGE_SHAPE, Image.ANTIALIAS)
+
+    width, height = image.size
+    new_width, new_height = IMAGE_SHAPE
+
+    left = round((width - new_width) / 2)
+    top = round((height - new_height) / 2)
+    x_right = round(width - new_width) - left
+    x_bottom = round(height - new_height) - top
+    right = width - x_right
+    bottom = height - x_bottom
+
+    return image.crop((left, top, right, bottom))
 
 
 def display_upload_screen():
     uploaded_file = st.file_uploader("Vyberte obrázek k obarvení...", type=['jpg', 'jpeg', 'png'])
     if uploaded_file is not None:
-        content_image = Image.open(uploaded_file).resize(IMAGE_SHAPE)
+        content_image = Image.open(uploaded_file)
 
-        return content_image, __select_filter()
+        return __resize_and_crop_image(content_image), __select_filter()
