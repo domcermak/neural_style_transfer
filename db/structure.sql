@@ -50,6 +50,17 @@ CREATE TABLE public.scheduled_images
 
 
 --
+-- Name: generated_images; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.generated_images
+(
+    id              serial NOT NULL,
+    generated_image bytea  NOT NULL
+);
+
+
+--
 -- Name: processed_images; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -58,7 +69,7 @@ CREATE TABLE public.processed_images
     id                      serial                      NOT NULL,
     presentation_session_id integer                     NOT NULL,
     scheduled_image_id      integer                     NOT NULL,
-    generated_image         bytea                       NOT NULL,
+    generated_image_id      integer                     NOT NULL,
     presented               bool DEFAULT false,
     created_at              timestamp without time zone NOT NULL
 );
@@ -79,6 +90,13 @@ ALTER TABLE ONLY public.sessions
 ALTER TABLE ONLY public.scheduled_images
     ADD CONSTRAINT scheduled_images_pkey PRIMARY KEY (id);
 
+
+--
+-- Name: generated_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.generated_images
+    ADD CONSTRAINT generated_images_pkey PRIMARY KEY (id);
 
 --
 -- Name: processed_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
@@ -116,6 +134,16 @@ ALTER TABLE ONLY public.processed_images
     ADD CONSTRAINT fk__processed_images__sessions
         FOREIGN KEY (presentation_session_id)
             REFERENCES public.sessions (id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk__processed_images__generated_images; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.processed_images
+    ADD CONSTRAINT fk__processed_images__generated_images
+        FOREIGN KEY (generated_image_id)
+            REFERENCES public.generated_images (id) ON DELETE CASCADE;
 
 
 --

@@ -83,15 +83,25 @@ def insert_into_processed_images(cursor, generated_image, scheduled_image_id):
     if len(rows) == 0:
         print('no presentations are running')
 
+    cursor.execute(
+        """
+        INSERT INTO public.generated_images (generated_image)
+        VALUES (%s)
+        RETURNING id
+        """,
+        (__encode_img(generated_image),),
+    )
+    generated_image_id = cursor.fetchone()[0]
+
     for row in rows:
         presentation_session_id = row[0]
 
         cursor.execute(
             """
-            INSERT INTO public.processed_images (presentation_session_id, scheduled_image_id, generated_image, created_at)
+            INSERT INTO public.processed_images (presentation_session_id, scheduled_image_id, generated_image_id, created_at)
             VALUES (%s, %s, %s, %s);
             """,
-            (presentation_session_id, scheduled_image_id, __encode_img(generated_image), datetime.now(timezone.utc)),
+            (presentation_session_id, scheduled_image_id, generated_image_id, datetime.now(timezone.utc)),
         )
 
 
@@ -102,10 +112,11 @@ def select_unpresented_images(cursor, presentation_session_uuid):
             pi.id,
             si.content_image,
             si.style_image,
-            pi.generated_image 
+            gi.generated_image 
         FROM 
             public.scheduled_images AS si INNER JOIN public.processed_images AS pi ON si.id = pi.scheduled_image_id
             INNER JOIN public.sessions AS ss ON ss.id = pi.presentation_session_id
+            inner join public.generated_images as gi on gi.id = pi.generated_image_id
         WHERE
             ss.type = 'presentation' AND 
             ss.uuid = %s AND 
@@ -114,7 +125,7 @@ def select_unpresented_images(cursor, presentation_session_uuid):
             pi.id,
             si.content_image,
             si.style_image,
-            pi.generated_image;
+            gi.generated_image;
         """,
         (presentation_session_uuid,),
     )
