@@ -39,7 +39,7 @@ def hideAdminHamburgerMenu():
 
 def fetch_qr_code_image():
     try:
-        path = pathlib.Path(__file__).parent.parent.joinpath('qr-code.png').absolute()
+        path = pathlib.Path(__file__).parent.parent.joinpath('runtime/qr-code.png').absolute()
         return Image.open(path)
     except:
         return None
@@ -61,19 +61,21 @@ def main():
     col1_placeholder3 = col1.empty()
     col2_placeholder = col2.empty()
 
+    st.sidebar.title('1. Naskenujte QR kód')
+    st.sidebar.title('2. Vyberte nebo vyfoťte obrázek, ze kterého chcete vytvořil malbu')
+    st.sidebar.title('3. Vyberte obrázek ze kterého má být použitý styl výsledné malby')
+    st.sidebar.title('4. Sledujte prezentaci')
+    qr_placeholder = st.sidebar.empty()
+
     while True:
-        if st.session_state['qr_code'] is None:
-            log.info("fetching qr code")
-            image = fetch_qr_code_image()
-            if image is not None:
-                st.sidebar.markdown('<div style="display: block; margin-top: 10rem"></div>', unsafe_allow_html=True)
-                log.info("qr code fetched")
-                st.sidebar.title('1. Naskenujte QR kód')
-                st.sidebar.title('2. Vyberte nebo vyfoťte obrázek, ze kterého chcete vytvořil malbu')
-                st.sidebar.title('3. Vyberte obrázek ze kterého má být použitý styl výsledné malby')
-                st.sidebar.title('4. Sledujte prezentaci')
-                st.sidebar.image(image=image)
-                st.session_state['qr_code'] = image
+        image = fetch_qr_code_image()
+        if all([st.session_state['qr_code'] != image]) and image is not None:
+            st.sidebar.markdown('<div style="display: block; margin-top: 10rem"></div>', unsafe_allow_html=True)
+            log.info("qr code fetched")
+            qr_placeholder.image(image=image)
+            st.session_state['qr_code'] = image
+        elif image is None and st.session_state['qr_code'] is None:
+            qr_placeholder.error('QR kód nebyl nalezen')
 
         session_uuid = st.session_state['uuid']
         rows = select_unpresented_images(PG_CURSOR, session_uuid)

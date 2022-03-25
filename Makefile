@@ -4,8 +4,6 @@ run :
 	docker-compose up
 
 install :
-	mkdir -p data/out
-	chmod o+w data/out
 	python3 setup.py install
 
 run_presentation_app :
@@ -21,5 +19,4 @@ serve :
 	ngrok http 8080
 
 live :
-	open http://localhost:8080
 	open http://localhost:8051

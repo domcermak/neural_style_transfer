@@ -10,7 +10,6 @@ COPY ./setup.py /
 COPY ./presentation_app /presentation_app
 COPY ./data /data
 COPY ./common /common
-COPY ./qr-code.png /
 
 RUN apt-get update -y
 RUN apt-get install -y python3.9

@@ -47,8 +47,10 @@ real-time.
     7. [How many users can connect to the Interactive Neural Style Transfer application through the Upload application?](#how-many-users-can-connect-to-the-interactive-neural-style-transfer-application-through-the-upload-application)
     8. [How many Presentation application sessions can be opened at once on different browser windows?](#how-many-presentation-application-sessions-can-be-opened-at-once-in-different-browser-windows)
     9. [How can I change style images?](#how-can-i-change-style-images)
-    10. [After scanning QR code from the Presentation application it says that the page is not accessible. What is the problem?](#after-scanning-qr-code-from-the-presentation-application-it-says-that-the-page-is-not-accessible-what-is-the-problem)
+    10. [Page is not accessible after scanning QR code from the Presentation application. What is the problem?](#page-is-not-accessible-after-scanning-qr-code-from-the-presentation-application-what-is-the-problem)
     11. [Presentation or Upload application is inaccessible. Why?](#presentation-or-upload-application-is-inaccessible-why)
+    12. [There is no QR code in the Presentation application, but there is a red error message. What shall I do?](#there-is-no-qr-code-in-the-presentation-application-what-shall-i-do)
+    13. [There a red error message in the Presentation application. What shall I do?](#there-a-red-error-message-in-the-presentation-application-what-shall-i-do)
 
 ## Structure and description
 
@@ -109,6 +111,11 @@ provide a UI to display stylized images submitted by users on a presentation scr
 
 - When there are many images being stylized at once, there is guaranteed that each stylized image stays displayed in the
   Presentation application at least 5 seconds.
+
+- The Presentation application scans the `qr-code.png` file in the projects root folder.
+It automatically updates the web view whenever there is a new version of the `qr-code.png` file.
+If the file is removed completely, the Presentation application keeps the last valid version. 
+
 
 ### PostgreSQL database structure
 
@@ -220,13 +227,15 @@ the [previously opened](#open-the-live-view-in-a-browser) browser window, users 
 ## Maintenance
 
 Free tier ngrok session has 2 hours expiration period. This means that it stops publishing the port with the Upload
-application after 2 hours and users will not be able to access the application. To fix this, ngrok needs to be
-restarted. This involves recreating QR code and Presentation application docker image. Delete the Presentation docker
-container and then [get public URL](#get-a-public-url), [create a QR code](#create-a-qr-code)
-and [run the Interactive Neural Style Transfer application](#run-the-interactive-neural-style-transfer-application)
-again. See more in the [Installation and Execution](#installation-and-execution) guide.
+application after 2 hours and users are no longer be able to access the application. 
 
-> NOTE: Use `docker rmi -f neural_style_transfer_presentation_app` to delete docker image of the Presentation application
+To fix this:
+1. Stop (ctrl + c) ngrok and [start it](#get-a-public-url) again.
+2. [Create a new QR](#create-a-qr-code) code matching the new ngrok URL.
+3. Replace the old `qr-code.png` file in the project's root folder with the new version of `qr-code.png` file.
+
+The Presentation application automatically checks the `qr-code.png`
+and updates it in the web view when there is a new version of the file.
 
 ## FAQ
 
@@ -287,7 +296,7 @@ Style images constraints:
 > NOTE: It is recommended to use paintings or drawings as a style images.
 > Other kinds of images could result in unpleasant stylization.
 
-### After scanning QR code from the Presentation application it says that the page is not accessible. What is the problem?
+### Page is not accessible after scanning QR code from the Presentation application. What is the problem?
 
 The Presentation application runs only on localhost, but the Upload application is published via ngrok on a public IP.
 There might be 2 problems:
@@ -296,15 +305,30 @@ There might be 2 problems:
 - or the QR code does not represent the current URL given by ngrok.
 
 To fix the problem:
+1. Restart ngrok.
+2. Create a new QR code from the public URL given by ngrok.
+3. Copy the new `qr-code.png` file to the root folder of the project.
 
-1. Stop and delete the docker containers.
-2. Stop ngrok.
-3. [Start the installation](#installation-and-execution). Pay attention to steps [3](#get-a-public-url)
-   and [4](#create-a-qr-code).
+The Presentation application automatically checks the `qr-code.png`
+and updates it in the web view when there is a new version of the file.
 
 ### Presentation or Upload application is inaccessible. Why?
 
 The Presentation application runs on `http://localhost:8051` and the Upload application on `http://localhost:8080`
 . There might be a port collision. Check the logs of the running containers. If the docker container logs mention port
 collision, identify and quit the colliding application.
+
+### There is no QR code in the Presentation application. What shall I do?
+If you see a red error message `QR kód nebyl nalezen` in the sidebar of the Presentation application, 
+it means that the application cannot find a `qr-code.png` file in the root folder of the project.
+
+1. Make sure the `qr-code.png` file is in the root folder of the project.
+2. Make sure, there is not a typo in the `qr-code.png` filename.
+
+### There a red error message in the Presentation application. What shall I do?
+If you see a red error message `QR kód nebyl nalezen` in the sidebar of the Presentation application, 
+it means that the application cannot find a `qr-code.png` file in the root folder of the project.
+
+1. Make sure the `qr-code.png` file is in the root folder of the project.
+2. Make sure, there is not a typo in the `qr-code.png` filename.
 
