@@ -60,6 +60,8 @@ The Interactive Neural Style Transfer application is made of 3 separate applicat
 
 Data between these applications is transferred via RabbitMQ messaging broker and PostgreSQL database.
 
+![Application flow diagram](assets/application_flow.png)
+
 ### Upload application
 
 Upload application is a web application based on [Streamlit](https://streamlit.io). Its primary purpose is to provide a
@@ -110,7 +112,7 @@ provide a UI to display stylized images submitted by users on a presentation scr
 
 ### PostgreSQL database structure
 
-![Entity relational diagram](./db/erd.png)
+![Entity relational diagram](assets/erd.png)
 
 #### Sessions table
 
