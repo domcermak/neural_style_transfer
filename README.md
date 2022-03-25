@@ -55,7 +55,7 @@ real-time.
     10. [Page is not accessible after scanning QR code from the Presentation application. What is the problem?](#page-is-not-accessible-after-scanning-qr-code-from-the-presentation-application-what-is-the-problem)
     11. [Presentation or Upload application is inaccessible. Why?](#presentation-or-upload-application-is-inaccessible-why)
     12. [There is no QR code in the Presentation application, but there is a red error message. What shall I do?](#there-is-no-qr-code-in-the-presentation-application-what-shall-i-do)
-    13. [There a red error message in the Presentation application. What shall I do?](#there-a-red-error-message-in-the-presentation-application-what-shall-i-do)
+    13. [There is a red error message in the Presentation application. What shall I do?](#there-is-a-red-error-message-in-the-presentation-application-what-shall-i-do)
 
 ## Structure and description
 
@@ -127,7 +127,7 @@ provide a UI to display stylized images submitted by users on a presentation scr
 
 #### Sessions table
 
-Sessions table stores `user` and `presentation` session.
+Sessions table stores `user` and `presentation` sessions.
 
 - A `user` session is created when a new device opens the Upload application.
 - A `presentation` session is created when a new device opens the Presentation application.
@@ -332,7 +332,7 @@ application cannot find a `qr-code.png` file in the `assets/` folder.
 1. Make sure the `qr-code.png` file is in the `assets/` folder.
 2. Make sure, there is not a typo in the `qr-code.png` filename.
 
-### There a red error message in the Presentation application. What shall I do?
+### There is a red error message in the Presentation application. What shall I do?
 
 If you see a red error message `QR kód nebyl nalezen` in the sidebar of the Presentation application, it means that the
 application cannot find a `qr-code.png` file in the `assets/` folder.
