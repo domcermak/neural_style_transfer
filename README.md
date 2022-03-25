@@ -1,6 +1,6 @@
 # Interactive Neural Style Transfer
 
-Interactive Neural Style Transfer application created for the [Noc vědců 2021](https://www.nocvedcu.cz) event is a web
+Interactive Neural Style Transfer application created for the [Noc vědců](https://www.nocvedcu.cz) event is a web
 application designed to interactively present the fast neural style transfer algorithm to the audience.
 
 Neural style transfer algorithm is a method to blend two images into a new one. The algorithm extracts visual structure
@@ -14,15 +14,22 @@ real-time.
 
 1. [Structure and description](#structure-and-description)
     1. [Upload application](#upload-application)
-       1. [Feature descriptions](#upload-application-feature-descriptions)
+        1. [Feature descriptions](#upload-application-feature-descriptions)
     2. [Neural worker](#neural-worker)
-       1. [Feature descriptions](#neural-worker-feature-descriptions)
+        1. [Feature descriptions](#neural-worker-feature-descriptions)
     3. [Presentation application](#presentation-application)
-       1. [Feature descriptions](#presentation-application-feature-descriptions)
+        1. [Feature descriptions](#presentation-application-feature-descriptions)
     4. [PostgreSQL Database Structure](#postgresql-database-structure)
-2. [Pre-installation requirements](#pre-installation-requirements)
+        1. [Sessions table](#sessions-table)
+        2. [Scheduled images table](#scheduled-images-table)
+        3. [Generated images table](#generated-images-table)
+        4. [Processed images table](#processed-images-table)
 3. [Installation and execution](#installation-and-execution)
-    1. [Ensure pre-installation requirements are fulfilled](#ensure-pre-installation-requirements-are-fulfilled)
+    1. [Pre-installation requirements](#pre-installation-requirements)
+        1. [Docker](#docker)
+        2. [Ngrok](#ngrok)
+        3. [Git](#git)
+        4. [Make](#make)
     2. [Clone the repozitory and enter the project](#clone-the-repozitory-and-enter-the-project)
     3. [Get a public URL](#get-a-public-url)
     4. [Create a QR code](#create-a-qr-code)
@@ -38,9 +45,10 @@ real-time.
     5. [Do I need to use ngrok to publish the Upload application?](#do-i-need-to-use-ngrok-to-publish-the-upload-application)
     6. [Is it safe to use the Upload application?](#is-it-safe-to-use-the-upload-application)
     7. [How many users can connect to the Interactive Neural Style Transfer application through the Upload application?](#how-many-users-can-connect-to-the-interactive-neural-style-transfer-application-through-the-upload-application)
-    8. [How many Presentation application instances can be opened at once on different browser windows?](#how-many-presentation-application-instances-can-be-opened-at-once-on-different-browser-windows)
-    9. [After scanning QR code from the Presentation application it says that the page is not accessible. What is the problem?](#after-scanning-qr-code-from-the-presentation-application-it-says-that-the-page-is-not-accessible-what-is-the-problem)
-    10. [Presentation or Upload application is inaccessible. Why?](#presentation-or-upload-application-is-inaccessible-why)
+    8. [How many Presentation application sessions can be opened at once on different browser windows?](#how-many-presentation-application-sessions-can-be-opened-at-once-in-different-browser-windows)
+    9. [How can I change style images?](#how-can-i-change-style-images)
+    10. [After scanning QR code from the Presentation application it says that the page is not accessible. What is the problem?](#after-scanning-qr-code-from-the-presentation-application-it-says-that-the-page-is-not-accessible-what-is-the-problem)
+    11. [Presentation or Upload application is inaccessible. Why?](#presentation-or-upload-application-is-inaccessible-why)
 
 ## Structure and description
 
@@ -61,42 +69,41 @@ published on a public IP via ngrok.
 #### Upload application feature descriptions
 
 - When a new user opens the Upload application in a browser, a unique session UUID is created and stored into the
-  PostgreSQL database, so the user is later able to download their own styled images.
+  PostgreSQL database, so the user is later able to download their own stylized images.
 
 - When a user uploads a content image, selects a style image and confirms processing, the Upload application stores the
-  content and style images into `scheduled_images` table in the PostgreSQL database and sends the record's `id` to the
-  Neural worker application for processing via RabbitMQ channel.
+  content and style images into `scheduled_images` table in the PostgreSQL database and sends the record's `id` via
+  RabbitMQ channel to the Neural worker application for stylization.
 
 - After the submitted images are processed, the Upload application notifies the user and offers a way to download the
-  processed image.
+  stylized image.
 
 ### Neural worker
 
 Neural worker is a backend application wrapping fast neural style transfer model. Its primary purpose is to stylize
-submitted images by users via the Upload application in real time.
+submitted images by users via the Upload application.
 
 #### Neural worker feature descriptions
 
 - Neural worker transforms content and style images into stylized images scheduled in `scheduled_images` table in
-  PostgreSQL database. Neural worker identifies new scheduled images by the `id` received from RabbitMQ channel.
+  PostgreSQL database. Neural worker identifies new scheduled images by the `id` received through RabbitMQ channel.
 
-- After image stylization, the Neural worker stores the generated image into `geneated_images` table in the PostgreSQL
+- After image stylization, the Neural worker stores the generated image into `generated_images` table in the PostgreSQL
   database and creates records in `processed_images` for all the running Presentation application sessions. Presentation
   application sessions are in table `sessions` with attribute `type='presentation'`.
 
 ### Presentation application
 
 Presentation application is a web application based on [Streamlit](https://streamlit.io). Its primary purpose is to
-provide a UI to display stylized images submitted by users in a presentation room.
+provide a UI to display stylized images submitted by users on a presentation screen.
 
 #### Presentation application feature descriptions
 
-- When a new instance of the Presentation application is opened in a browser window, a unique session UUID is created
-  and stored into the PostgreSQL database. When an image for stylization is submitted and stylized, the stylized image
-  is registered to the all existing presentation session UUIDs.
+- When a new session of the Presentation application is opened in a browser window, a unique session UUID is created and
+  stored into the PostgreSQL database.
 
-- Every instance of the Presentation application automatically scans in the `processed_images` table in the PostgreSQL
-  database, so all Presentation application instances update the displayed images when a new image is stylized.
+- Every session of the Presentation application automatically scans the `processed_images` table in the PostgreSQL
+  database, so all Presentation application sessions update the displayed images when a new image is stylized.
 
 - When there are many images being stylized at once, there is guaranteed that each stylized image stays displayed in the
   Presentation application at least 5 seconds.
@@ -105,36 +112,67 @@ provide a UI to display stylized images submitted by users in a presentation roo
 
 ![Entity relational diagram](./db/erd.png)
 
-## Pre-installation requirements
+#### Sessions table
+
+Sessions table stores `user` and `presentation` session.
+
+- A `user` session is created when a new device opens the Upload application.
+- A `presentation` session is created when a new device opens the Presentation application.
+
+#### Scheduled images table
+
+Scheduled images table stores content and style images scheduled for stylization.
+
+#### Generated images table
+
+Generated images table stores stylized images.
+
+#### Processed images table
+
+Processed images table stores a list of stylized images assigned to each Presentation application session. This table
+ensures, that all active Presentation application sessions can update its displayed images.
+
+## Installation and execution
+
+Run this installation on a PC or laptop connected to internet connection and to a projector (or large monitor).
+
+### Pre-installation requirements
 
 - PC or laptop connected to a projector (or large monitor)
 - Internet connection
 - [Docker](https://www.docker.com)
 - [Ngrok](https://ngrok.com/download)
 - [Git](https://git-scm.com)
+- [Make](https://www.gnu.org/software/make/)
 
 Optional:
 
 - Wi-Fi connection for attendants
 
-## Installation and execution
-
-Run this installation on a PC or laptop connected to internet connection and to a projector (or large monitor).
-
-### Ensure pre-installation requirements are fulfilled
+#### Docker
 
 - [Install](https://www.docker.com/get-started/) and [run docker](https://docs.docker.com/desktop/).
 
 > NOTE: Ensure installed and running docker by running `docker info` command in your terminal. The command should not return an error.
+
+#### Ngrok
 
 - [Install ngrok](https://ngrok.com/download), [log in](https://dashboard.ngrok.com/login)
   and [connect your account](https://dashboard.ngrok.com/get-started/setup).
 
 > NOTE: Ensure installed ngrok by running `which ngrok` command in your terminal. The command should not return an error.
 
+#### Git
+
 - [Install git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 
 > NOTE: Ensure installed git by running `which git` command in your terminal. The command should not return an error.
+
+#### Make
+
+- [Install make](http://gnuwin32.sourceforge.net/install.html)
+
+> NOTE: Ensure installed make by running `which make` command in your terminal. The command should not return an error.
 
 ### Clone the repozitory and enter the project
 
@@ -174,16 +212,17 @@ make live
 
 ### Scan the QR code in the Presentation application
 
-By scanning the QR code displayed in the Presentation application running in the previously opened browser window, users
-can submit their images to be stylized.
+By scanning the QR code displayed in the Presentation application running in
+the [previously opened](#open-the-live-view-in-a-browser) browser window, users can submit their images to be stylized.
 
 ## Maintenance
 
 Free tier ngrok session has 2 hours expiration period. This means that it stops publishing the port with the Upload
-application after 2 hours and users will not be able to access the application. To fix this, ngrok needs to be restarted.
-This involves recreating QR code and Presentation application docker image. 
-Delete the Presentation docker container and then [get public URL](#get-a-public-url), [create a QR code](#create-a-qr-code) and [run the Interactive Neural Style Transfer application](#run-the-interactive-neural-style-transfer-application) again. 
-See more in the [Installation and Execution](#installation-and-execution) guide.
+application after 2 hours and users will not be able to access the application. To fix this, ngrok needs to be
+restarted. This involves recreating QR code and Presentation application docker image. Delete the Presentation docker
+container and then [get public URL](#get-a-public-url), [create a QR code](#create-a-qr-code)
+and [run the Interactive Neural Style Transfer application](#run-the-interactive-neural-style-transfer-application)
+again. See more in the [Installation and Execution](#installation-and-execution) guide.
 
 > NOTE: Use `docker rmi -f neural_style_transfer_presentation_app` to delete docker image of the Presentation application
 
@@ -229,18 +268,32 @@ over HTTPS.
 This depends a lot on the subscription tier of ngrok.
 [Free tier](https://ngrok.com/pricing) of ngrok allows up to 40 unique connections per minute.
 
-### How many Presentation application instances can be opened at once on different browser windows?
+### How many Presentation application sessions can be opened at once in different browser windows?
 
-As many as you wish. Each Presentation application instance has its own unique UUID which ensures that all instances get
+As many as you wish. Each Presentation application session has its own unique UUID which ensures that all sessions get
 updates about newly stylized images.
+
+### How can I change style images?
+
+Style images are built-in and available in `./data/style/` folder. You can extend or replace the list of images.
+
+Style images constraints:
+
+- Only JPG and JPEG images are supported.
+- At least one style image must be present.
+
+> NOTE: It is recommended to use paintings or drawings as a style images.
+> Other kinds of images could result in unpleasant stylization.
 
 ### After scanning QR code from the Presentation application it says that the page is not accessible. What is the problem?
 
-The Presentation application is running only on localhost, but the Upload application is published via ngrok on publish
-DNS. There might be 2 problems:
+The Presentation application runs only on localhost, but the Upload application is published via ngrok on a public IP.
+There might be 2 problems:
 
-- Either ngrok is not running and the Upload application is not published,
+- Either ngrok is not running and therefore the Upload application is not published,
 - or the QR code does not represent the current URL given by ngrok.
+
+To fix the problem:
 
 1. Stop and delete the docker containers.
 2. Stop ngrok.
@@ -249,7 +302,7 @@ DNS. There might be 2 problems:
 
 ### Presentation or Upload application is inaccessible. Why?
 
-The Presentation application should run on `http://localhost:8051` and the Upload application on `http://localhost:8080`
+The Presentation application runs on `http://localhost:8051` and the Upload application on `http://localhost:8080`
 . There might be a port collision. Check the logs of the running containers. If the docker container logs mention port
 collision, identify and quit the colliding application.
 
