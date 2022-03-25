@@ -33,16 +33,18 @@ def __select_filter():
 
 def __fix_orientation(image):
     # https://stackoverflow.com/questions/4228530/pil-thumbnail-is-rotating-my-image
-    orientation = 0x0112
-    exif = dict(image._getexif().items())
+    try:
+        orientation = 0x0112
+        exif = dict(image._getexif().items())
 
-    if exif[orientation] == 3:
-        image = image.rotate(180, expand=True)
-    elif exif[orientation] == 6:
-        image = image.rotate(270, expand=True)
-    elif exif[orientation] == 8:
-        image = image.rotate(90, expand=True)
-
+        if exif[orientation] == 3:
+            image = image.rotate(180, expand=True)
+        elif exif[orientation] == 6:
+            image = image.rotate(270, expand=True)
+        elif exif[orientation] == 8:
+            image = image.rotate(90, expand=True)
+    except KeyError:
+        pass
     return image
 
 
