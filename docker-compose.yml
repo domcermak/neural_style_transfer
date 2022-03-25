@@ -15,7 +15,7 @@ services:
       PYTHONPATH: '/'
       PG_HOST: 'postgres' # https://docs.docker.com/compose/networking/
     volumes:
-      - './:/runtime'
+      - './assets:/assets'
     networks:
       - neural_style_transfer_network
 

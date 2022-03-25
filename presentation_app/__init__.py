@@ -39,7 +39,7 @@ def hideAdminHamburgerMenu():
 
 def fetch_qr_code_image():
     try:
-        path = pathlib.Path(__file__).parent.parent.joinpath('runtime/qr-code.png').absolute()
+        path = pathlib.Path(__file__).parent.parent.joinpath('assets/qr-code.png').absolute()
         return Image.open(path)
     except:
         return None

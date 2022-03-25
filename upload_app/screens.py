@@ -9,7 +9,7 @@ from components.RadioButtonImages import choose_from_images
 
 
 def __style_path():
-    return Path(__file__).parent.parent.joinpath('data').joinpath('style')
+    return Path(__file__).parent.parent.joinpath('assets').joinpath('style')
 
 
 def __load_style_image_paths_and_labels():

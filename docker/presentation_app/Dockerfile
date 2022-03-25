@@ -8,7 +8,6 @@ COPY ./Makefile /
 COPY ./requirements/presentation_app/requirements.txt /
 COPY ./setup.py /
 COPY ./presentation_app /presentation_app
-COPY ./data /data
 COPY ./common /common
 
 RUN apt-get update -y

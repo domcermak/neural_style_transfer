@@ -6,7 +6,6 @@ COPY ./Makefile /
 COPY ./requirements/neural_worker/requirements.txt /
 COPY ./setup.py /
 COPY ./neural_worker /neural_worker
-COPY ./data /data
 COPY ./common /common
 
 RUN apt-get update -y
