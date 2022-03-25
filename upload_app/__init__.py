@@ -59,31 +59,41 @@ def add_to_process_queue(content_image, style_image):
 
 
 def main():
-    st.set_page_config(page_title='Umění pomocí umělé inteligence', page_icon=None)  # we could add one
+    st.set_page_config(page_title='Umění pomocí umělé inteligence', page_icon=None, initial_sidebar_state='collapsed')  # we could add one
     st.header('Umění pomocí umělé inteligence')
 
     if is_production():
         hideAdminHamburgerMenu()
 
+    st.sidebar.title("Menu")
+    st.sidebar.info("Po výběru zavřete Menu křížkem.")
+
+    if st.sidebar.button("Nahrání dalšího obrázku"):
+        st.session_state['state'] = 'upload'
+
+    if st.sidebar.button("Stahování"):
+        st.session_state['state'] = 'download'
+
     if 'state' not in st.session_state:
         st.session_state['state'] = 'upload'
 
     if st.session_state['state'] == 'wait':
-        st.success('Vybrané obrázky byly přidány do zpracování. Nyní sledujte prezentaci.')
+        message_placeholder = st.empty()
+        message_placeholder.success('Vybrané obrázky byly přidány do zpracování. Nyní sledujte prezentaci.')
 
         if st.button("Nahrát další obrázek"):
             st.session_state['state'] = 'upload'
             st.experimental_rerun()
 
-        while True:
+        if 'image_generated' not in st.session_state:
             if any_image_ready_to_download(PG_CURSOR, st.session_state['uuid']):
-                break
-            time.sleep(1)
-
-        st.success('Vámi zadané obrázky jsou připravené ke stažení')
-        if st.button("Stáhnout vygenerovaný obrázek"):
-            st.session_state['state'] = 'download'
-            st.experimental_rerun()
+                message_placeholder.info(
+                    'Obrázek je dostupný ke stažení po kliknutí na ">" v levém horním rohu a "Stahování".'
+                )
+                st.snow()
+                st.session_state['image_generated'] = True
+            else:
+                st.experimental_rerun()
 
     elif st.session_state['state'] == 'upload':
         images = display_upload_screen()
@@ -97,12 +107,14 @@ def main():
 
     elif st.session_state['state'] == 'download':
         images = select_images_to_download(PG_CURSOR, st.session_state['uuid'])
-        display_download_screen(images)
-
-        st.text("")
-        if st.button("Nahrát další obrázek"):
-            st.session_state['state'] = 'upload'
-            st.experimental_rerun()
+        if len(images) == 0:
+            st.info('Zatím nejsou dostupné žádné obrázky ke stažení.')
+            st.text("")
+            if st.button('Nahrát obrázek'):
+                st.session_state['state'] = 'upload'
+                st.experimental_rerun()
+        else:
+            display_download_screen(images)
 
 
 if __name__ == '__main__':
