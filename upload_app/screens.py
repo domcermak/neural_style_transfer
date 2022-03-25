@@ -1,7 +1,7 @@
 import io
 
 import streamlit as st
-from PIL import Image
+from PIL import Image, ExifTags
 from pathlib import Path
 from os import listdir
 from common.utils import IMAGE_SHAPE
@@ -31,7 +31,23 @@ def __select_filter():
         return Image.open(image_paths[option]).resize(IMAGE_SHAPE)
 
 
+def __fix_orientation(image):
+    # https://stackoverflow.com/questions/4228530/pil-thumbnail-is-rotating-my-image
+    orientation = 0x0112
+    exif = dict(image._getexif().items())
+
+    if exif[orientation] == 3:
+        image = image.rotate(180, expand=True)
+    elif exif[orientation] == 6:
+        image = image.rotate(270, expand=True)
+    elif exif[orientation] == 8:
+        image = image.rotate(90, expand=True)
+
+    return image
+
+
 def __resize_and_crop_image(image):
+    image = __fix_orientation(image)
     # resize with aspect ratio
     image.thumbnail(IMAGE_SHAPE, Image.ANTIALIAS)
 
