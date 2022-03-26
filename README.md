@@ -3,8 +3,10 @@
 Interactive Neural Style Transfer application created for the [Noc vědců](https://www.nocvedcu.cz) event is a web
 application designed to interactively present the fast neural style transfer algorithm to the audience.
 
-Neural style transfer algorithm is a method to blend two images into a new one. The algorithm extracts visual structure
-from a content image and style from a style image. The visual structure (content) and style are blended together to
+Neural style transfer algorithm is a method to blend two images into a new one.
+The algorithm extracts visual structure
+from a content image and style from a style image.
+The visual structure (content) and style are blended together to
 create a new image.
 
 Fast neural style transfer algorithm is a modification of the neural style transfer algorithm to perform nearly in
@@ -36,23 +38,22 @@ real-time.
         3. [Git](#git)
         4. [Make](#make)
     2. [Clone the repozitory and enter the project](#clone-the-repozitory-and-enter-the-project)
-    3. [Get a public URL](#get-a-public-url)
-    4. [Create a QR code](#create-a-qr-code)
+    3. [Start ngrok to publish the port of the Upload application](#start-ngrok-to-publish-the-port-of-the-upload-application)
+    4. [Create a QR code from the public URL](#create-a-qr-code-from-the-public-url)
     5. [Run the Interactive Neural Style Transfer application](#run-the-interactive-neural-style-transfer-application)
-    6. [Open the LIVE view in a browser](#open-the-live-view-in-a-browser)
-    7. [Scan the QR code in the Presentation application](#scan-the-qr-code-in-the-presentation-application)
+    6. [Open the Presentation application in a browser](#open-the-presentation-application-in-a-browser)
 4. [Maintenance](#maintenance)
 5. [FAQ](#faq)
-    1. [What is Interactive Neural Style Transfer application?](#what-is-interactive-neural-style-transfer-application)
-    2. [What is Neural Style Transfer algorithm?](#what-is-neural-style-transfer-algorithm)
-    3. [What is Fast Neural Style Transfer algorithm?](#what-is-fast-neural-style-transfer-algorithm)
+    1. [What is the Interactive Neural Style Transfer application?](#what-is-the-interactive-neural-style-transfer-application)
+    2. [What is the Neural Style Transfer algorithm?](#what-is-the-neural-style-transfer-algorithm)
+    3. [What is the Fast Neural Style Transfer algorithm?](#what-is-the-fast-neural-style-transfer-algorithm)
     4. [Do I need a paid tier of ngrok to run the Interactive Neural Style Transfer application?](#do-i-need-a-paid-tier-of-ngrok-to-run-the-interactive-neural-style-transfer-application)
     5. [Do I need to use ngrok to publish the Upload application?](#do-i-need-to-use-ngrok-to-publish-the-upload-application)
     6. [Is it safe to use the Upload application?](#is-it-safe-to-use-the-upload-application)
     7. [How many users can connect to the Interactive Neural Style Transfer application through the Upload application?](#how-many-users-can-connect-to-the-interactive-neural-style-transfer-application-through-the-upload-application)
     8. [How many Presentation application sessions can be opened at once on different browser windows?](#how-many-presentation-application-sessions-can-be-opened-at-once-in-different-browser-windows)
     9. [How can I change style images?](#how-can-i-change-style-images)
-    10. [Page is not accessible after scanning QR code from the Presentation application. What is the problem?](#page-is-not-accessible-after-scanning-qr-code-from-the-presentation-application-what-is-the-problem)
+    10. [The page is not accessible after scanning QR code from the Presentation application. What is the problem?](#the-page-is-not-accessible-after-scanning-the-qr-code-from-the-presentation-application-what-is-the-problem)
     11. [Presentation or Upload application is inaccessible. Why?](#presentation-or-upload-application-is-inaccessible-why)
     12. [There is no QR code in the Presentation application, but there is a red error message. What shall I do?](#there-is-no-qr-code-in-the-presentation-application-what-shall-i-do)
     13. [There is a red error message in the Presentation application. What shall I do?](#there-is-a-red-error-message-in-the-presentation-application-what-shall-i-do)
@@ -65,14 +66,16 @@ The Interactive Neural Style Transfer application is made of 3 separate applicat
 - Neural worker,
 - and Presentation application.
 
-Data between these applications is transferred via RabbitMQ messaging broker and PostgreSQL database.
+Data between these applications are transferred via RabbitMQ messaging broker and PostgreSQL database.
 
 ![Application flow diagram](assets/docs/application_flow.png)
 
 ### Upload application
 
-Upload application is a web application based on [Streamlit](https://streamlit.io). Its primary purpose is to provide a
-mobile friendly UI to upload content images, select style images and download stylized images. The Upload application is
+Upload application is a web application based on [Streamlit](https://streamlit.io).
+Its primary purpose is to provide a
+mobile friendly UI to upload content images, select style images and download stylized images.
+The Upload application is
 published on a public IP via ngrok.
 
 #### Upload application feature descriptions
@@ -89,22 +92,23 @@ published on a public IP via ngrok.
 
 ### Neural worker
 
-Neural worker is a backend application wrapping fast neural style transfer model. Its primary purpose is to stylize
-submitted images by users via the Upload application.
+Neural worker is a backend application wrapping fast neural style transfer model.
+Its primary purpose is to stylize submitted images by users via the Upload application.
 
 #### Neural worker feature descriptions
 
 - Neural worker transforms content and style images into stylized images scheduled in `scheduled_images` table in
-  PostgreSQL database. Neural worker identifies new scheduled images by the `id` received through RabbitMQ channel.
+  PostgreSQL database.
+  Neural worker identifies new scheduled images by the `id` received through RabbitMQ channel.
 
 - After image stylization, the Neural worker stores the generated image into `generated_images` table in the PostgreSQL
-  database and creates records in `processed_images` for all the running Presentation application sessions. Presentation
-  application sessions are in table `sessions` with attribute `type='presentation'`.
+  database and creates records in `processed_images` for all the running Presentation application sessions.
+  Presentation application sessions are in table `sessions` with attribute `type='presentation'`.
 
 ### Presentation application
 
-Presentation application is a web application based on [Streamlit](https://streamlit.io). Its primary purpose is to
-provide a UI to display stylized images submitted by users on a presentation screen.
+Presentation application is a web application based on [Streamlit](https://streamlit.io).
+Its primary purpose is to provide a UI to display stylized images submitted by users on a presentation screen.
 
 #### Presentation application feature descriptions
 
@@ -117,9 +121,9 @@ provide a UI to display stylized images submitted by users on a presentation scr
 - When there are many images being stylized at once, there is guaranteed that each stylized image stays displayed in the
   Presentation application at least 5 seconds.
 
-- The Presentation application scans the `qr-code.png` file in the `assets/` folder automatically every 1 second. It
-  automatically updates the web view whenever there is a new version of the `qr-code.png` file. If the file is removed
-  completely, the Presentation application keeps the last valid version.
+- The Presentation application scans the `qr-code.png` file in the `assets/` folder automatically every 1 second.
+  It automatically updates the web view whenever there is a new version of the `qr-code.png` file.
+  If the file is removed completely, the Presentation application keeps the last valid version.
 
 ### PostgreSQL database structure
 
@@ -142,8 +146,8 @@ Generated images table stores stylized images.
 
 #### Processed images table
 
-Processed images table stores a list of stylized images assigned to each Presentation application session. This table
-ensures, that all active Presentation application sessions can update its displayed images.
+Processed images table stores a list of stylized images assigned to each Presentation application session.
+This table ensures that all active Presentation application sessions can update its displayed images.
 
 ## Installation and execution
 
@@ -193,13 +197,13 @@ Optional:
 git clone https://github.com/domcermak/neural_style_transfer.git && cd neural_style_transfer
 ```
 
-### Get a public URL
+### Start ngrok to publish the port of the Upload application
 
 ```bash
 make serve
 ```
 
-### Create a QR code
+### Create a QR code from the public URL
 
 - Open [https://www.qrcode-monkey.com](https://www.qrcode-monkey.com) and generate a new QR code from the public URL
   generated by the previous step starting with `https://`.
@@ -207,26 +211,22 @@ make serve
 
 ### Run the Interactive Neural Style Transfer application
 
-Following command starts the dockerized Interactive Neural Style Transfer application. This process takes up to several
-minutes.
+Following command starts the dockerized Interactive Neural Style Transfer application.
+This process takes up to several minutes.
 
 ```bash
 make run
 ```
 
-### Open the LIVE view in a browser
+### Open the Presentation application in a browser
 
-Following command opens the Presentation application in the default browser. Move the browser window to the connected
-projector (or monitor) to effectively present the Interactive Neural Style Transfer application.
+Following command opens the Presentation application in the default browser.
+Move the browser window to the connected projector (or monitor)
+to effectively present the Interactive Neural Style Transfer application.
 
 ```bash
 make live
 ```
-
-### Scan the QR code in the Presentation application
-
-By scanning the QR code displayed in the Presentation application running in
-the [previously opened](#open-the-live-view-in-a-browser) browser window, users can submit their images to be stylized.
 
 ## Maintenance
 
@@ -244,49 +244,60 @@ and updates it in the web view when there is a new version of the file.
 
 ## FAQ
 
-### What is Interactive Neural Style Transfer application?
+### What is the Interactive Neural Style Transfer application?
 
 Interactive Neural Style Transfer application created for the [Noc vědců 2021](https://www.nocvedcu.cz) event is a web
 application designed to interactively present the fast neural style transfer algorithm to the audience.
 
-### What is Neural Style Transfer algorithm?
+### What is the Neural Style Transfer algorithm?
 
-Neural style transfer algorithm is a method to blend two images into a new one. The algorithm extracts visual structure
-from a content image and style from a style image. This visual structure (content) and style are then blended together
+Neural style transfer algorithm is a method to blend two images into a new one.
+The algorithm extracts visual structure
+from a content image and style from a style image.
+This visual structure (content) and style are then blended together
 to create a new image.
 
-### What is Fast Neural Style Transfer algorithm?
+### What is the Fast Neural Style Transfer algorithm?
 
 Fast neural style transfer algorithm is a modification of the neural style transfer algorithm, to perform nearly in
 real-time.
 
-Neural style transfer algorithm is a method to blend two images into a new one. The algorithm extracts visual structure
-from a content image and style from a style image. This visual structure (content) and style are then blended together
+Neural style transfer algorithm is a method to blend two images into a new one.
+The algorithm extracts visual structure
+from a content image and style from a style image.
+This visual structure (content) and style are then blended together
 to create a new image.
 
 ### Do I need a paid tier of ngrok to run the Interactive Neural Style Transfer application?
 
-It depends on your audience. [Free tier](https://ngrok.com/pricing) of ngrok allows up to 40 unique connections per
-minute. You might want to consider paid version of ngrok if you plan to have more than 40 unique users per minute.
+It depends on your audience.
+The [free tier](https://ngrok.com/pricing) of ngrok allows up to 40 unique connections per
+minute.
+You might want to consider a paid version of ngrok if you plan to have more than 40 unique users per minute.
 
 ### Do I need to use ngrok to publish the Upload application?
 
-No. Ngrok is a default solution here to publish an application running on localhost to the world. You can use any other
+No.
+Ngrok is a default solution here to publish an application running on localhost to the world.
+You can use any other
 service serving the same purpose.
 
 ### Is it safe to use the Upload application?
 
-Yes. There are no user sensitive information being stored. Also, if set up correctly, the Upload application is running
+Yes.
+There is no user-sensitive information being stored.
+Also, if set up correctly, the Upload application is running
 over HTTPS.
 
 ### How many users can connect to the Interactive Neural Style Transfer application through the Upload application?
 
 This depends a lot on the subscription tier of ngrok.
-[Free tier](https://ngrok.com/pricing) of ngrok allows up to 40 unique connections per minute.
+The [free tier](https://ngrok.com/pricing) of ngrok allows up to 40 unique connections per minute.
 
 ### How many Presentation application sessions can be opened at once in different browser windows?
 
-As many as you wish. Each Presentation application session has its own unique UUID which ensures that all sessions get
+As many as you wish.
+Each Presentation application session has its own unique UUID, which ensures that all sessions get
 updates about newly stylized images.
 
 ### How can I change style images?
@@ -301,12 +312,12 @@ Style images constraints:
 > NOTE: It is recommended to use paintings or drawings as a style images.
 > Other kinds of images could result in unpleasant stylization.
 
-### Page is not accessible after scanning QR code from the Presentation application. What is the problem?
+### The page is not accessible after scanning the QR code from the Presentation application. What is the problem?
 
 The Presentation application runs only on localhost, but the Upload application is published via ngrok on a public IP.
 There might be 2 problems:
 
-- Either ngrok is not running and therefore the Upload application is not published,
+- Either ngrok is not running and, therefore the Upload application is not published,
 - or the QR code does not represent the current URL given by ngrok.
 
 To fix the problem:
@@ -320,8 +331,10 @@ and updates it in the web view when there is a new version of the file.
 
 ### Presentation or Upload application is inaccessible. Why?
 
-The Presentation application runs on `http://localhost:8051` and the Upload application on `http://localhost:8080`
-. There might be a port collision. Check the logs of the running containers. If the docker container logs mention port
+The Presentation application runs on `http://localhost:8051` and the Upload application on `http://localhost:8080`.
+There might be a port collision.
+Check the logs of the running containers.
+If the docker container logs mention port
 collision, identify and quit the colliding application.
 
 ### There is no QR code in the Presentation application. What shall I do?
