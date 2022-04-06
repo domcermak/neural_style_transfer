@@ -14,8 +14,8 @@ real-time.
 
 ## TLDR; Fast links
 
-- [QR code generation URL](https://www.qrcode-monkey.com)
-- [Presentation localhost URL](http://localhost:8051)
+- [QR code generation URL](https://www.qrcode-monkey.com).
+- [Presentation localhost URL](http://localhost:8051).
 
 ## Table of contents
 
@@ -49,14 +49,13 @@ real-time.
     3. [What is the Fast Neural Style Transfer algorithm?](#what-is-the-fast-neural-style-transfer-algorithm)
     4. [Do I need a paid tier of ngrok to run the Interactive Neural Style Transfer application?](#do-i-need-a-paid-tier-of-ngrok-to-run-the-interactive-neural-style-transfer-application)
     5. [Do I need to use ngrok to publish the Upload application?](#do-i-need-to-use-ngrok-to-publish-the-upload-application)
-    6. [Is it safe to use the Upload application?](#is-it-safe-to-use-the-upload-application)
-    7. [How many users can connect to the Interactive Neural Style Transfer application through the Upload application?](#how-many-users-can-connect-to-the-interactive-neural-style-transfer-application-through-the-upload-application)
-    8. [How many Presentation application sessions can be opened at once on different browser windows?](#how-many-presentation-application-sessions-can-be-opened-at-once-in-different-browser-windows)
-    9. [How can I change style images?](#how-can-i-change-style-images)
-    10. [The page is not accessible after scanning QR code from the Presentation application. What is the problem?](#the-page-is-not-accessible-after-scanning-the-qr-code-from-the-presentation-application-what-is-the-problem)
-    11. [Presentation or Upload application is inaccessible. Why?](#presentation-or-upload-application-is-inaccessible-why)
-    12. [There is no QR code in the Presentation application, but there is a red error message. What shall I do?](#there-is-no-qr-code-in-the-presentation-application-what-shall-i-do)
-    13. [There is a red error message in the Presentation application. What shall I do?](#there-is-a-red-error-message-in-the-presentation-application-what-shall-i-do)
+    6. [How many users can connect to the Interactive Neural Style Transfer application through the Upload application?](#how-many-users-can-connect-to-the-interactive-neural-style-transfer-application-through-the-upload-application)
+    7. [How many Presentation application sessions can be opened at once on different browser windows?](#how-many-presentation-application-sessions-can-be-opened-at-once-in-different-browser-windows)
+    8. [How can I change style images?](#how-can-i-change-style-images)
+    9. [The page is not accessible after scanning QR code from the Presentation application. What is the problem?](#the-page-is-not-accessible-after-scanning-the-qr-code-from-the-presentation-application-what-is-the-problem)
+    10. [Presentation or Upload application is inaccessible. Why?](#presentation-or-upload-application-is-inaccessible-why)
+    11. [There is no QR code in the Presentation application, but there is a red error message. What shall I do?](#there-is-no-qr-code-in-the-presentation-application-what-shall-i-do)
+    12. [There is a red error message in the Presentation application. What shall I do?](#there-is-a-red-error-message-in-the-presentation-application-what-shall-i-do)
 
 ## Structure and description
 
@@ -92,7 +91,7 @@ published on a public IP via ngrok.
 
 ### Neural worker
 
-Neural worker is a backend application wrapping fast neural style transfer model.
+Neural worker is a backend application wrapping a fast neural style transfer model.
 Its primary purpose is to stylize submitted images by users via the Upload application.
 
 #### Neural worker feature descriptions
@@ -155,68 +154,81 @@ Run this installation on a PC or laptop connected to internet connection and to 
 
 ### Pre-installation requirements
 
-- PC or laptop connected to a projector (or large monitor)
-- Internet connection
-- [Docker](https://www.docker.com)
-- [Ngrok](https://ngrok.com/download)
-- [Git](https://git-scm.com)
-- [Make](https://www.gnu.org/software/make/)
+- PC or laptop connected to a projector (or large monitor),
+- Internet connection,
+- [Docker](https://www.docker.com),
+- [Ngrok](https://ngrok.com/download),
+- [Git](https://git-scm.com),
+- and [Make](https://www.gnu.org/software/make/).
 
 Optional:
 
-- Wi-Fi connection for attendants
+- Wi-Fi connection for attendants.
 
 #### Docker
 
-- [Install](https://www.docker.com/get-started/) and [run docker](https://docs.docker.com/desktop/).
+1. [Install docker](https://www.docker.com/get-started/).
+2. [Run docker](https://docs.docker.com/desktop/).
 
 > NOTE: Ensure installed and running docker by running `docker info` command in your terminal. The command should not return an error.
 
 #### Ngrok
 
-- [Install ngrok](https://ngrok.com/download), [log in](https://dashboard.ngrok.com/login)
-  and [connect your account](https://dashboard.ngrok.com/get-started/setup).
+1. [Install ngrok](https://ngrok.com/download).
+2. [Log in to ngrok](https://dashboard.ngrok.com/login).
+3. [Connect your ngrok account with the device you are using](https://dashboard.ngrok.com/get-started/setup).
 
 > NOTE: Ensure installed ngrok by running `which ngrok` command in your terminal. The command should not return an error.
 
 #### Git
 
-- [Install git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+1. [Install git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 
 > NOTE: Ensure installed git by running `which git` command in your terminal. The command should not return an error.
 
 #### Make
 
-- [Install make](http://gnuwin32.sourceforge.net/install.html)
+1. [Install make](http://gnuwin32.sourceforge.net/install.html).
 
 > NOTE: Ensure installed make by running `which make` command in your terminal. The command should not return an error.
 
 ### Clone the repozitory and enter the project
 
-```bash
-git clone https://github.com/domcermak/neural_style_transfer.git && cd neural_style_transfer
-```
+Following command clones the Interactive Neural Style Transfer repozitory into the current directory
+and enters the project.
+
+1. Execute following command in a terminal window.
+    ```bash
+    git clone https://github.com/domcermak/neural_style_transfer.git && cd neural_style_transfer
+    ```
 
 ### Start ngrok to publish the port of the Upload application
 
-```bash
-make serve
-```
+Following command executes the `ngrok` binary and publishes the port `8080` on a public DNS.
+
+1. Execute following command in a terminal window.
+    ```bash
+    make serve
+    ```
+2. Copy the URL starting with `https://` given by the `make serve` command.
+
+> NOTE: The URL will be used in the next step to create a QR code for the Upload application users.
 
 ### Create a QR code from the public URL
 
-- Open [https://www.qrcode-monkey.com](https://www.qrcode-monkey.com) and generate a new QR code from the public URL
-  generated by the previous step starting with `https://`.
-- Copy the `qr-code.png` file to the `assets/` folder.
+1. Ensure you copied the URL starting with `https://` given by the [previous step](#start-ngrok-to-publish-the-port-of-the-upload-application).
+2. Generate a new QR code by opening [https://www.qrcode-monkey.com](https://www.qrcode-monkey.com).
+4. Copy the `qr-code.png` file with the QR code downloaded from the [https://www.qrcode-monkey.com](https://www.qrcode-monkey.com) to the `assets/` folder.
 
 ### Run the Interactive Neural Style Transfer application
 
 Following command starts the dockerized Interactive Neural Style Transfer application.
 This process takes up to several minutes.
 
-```bash
-make run
-```
+1. Execute following command in a terminal window.
+    ```bash
+    make run
+    ```
 
 ### Open the Presentation application in a browser
 
@@ -224,19 +236,21 @@ Following command opens the Presentation application in the default browser.
 Move the browser window to the connected projector (or monitor)
 to effectively present the Interactive Neural Style Transfer application.
 
-```bash
-make live
-```
+1. Execute following command in a terminal window.
+    ```bash
+    make live
+    ```
 
 ## Maintenance
 
-Free tier ngrok session has 2 hours expiration period. This means that it stops publishing the port with the Upload
-application after 2 hours and users are no longer be able to access the application.
+Free tier ngrok session has 2 hours expiration period.
+This means that it stops publishing the port with the Upload application after 2 hours
+and users are no longer able to access the application.
 
 To fix this:
 
-1. Stop (ctrl + c) ngrok and [start it](#get-a-public-url) again.
-2. [Create a new QR](#create-a-qr-code) code matching the new ngrok URL.
+1. Stop (ctrl + c) ngrok and [start it](#start-ngrok-to-publish-the-port-of-the-upload-application) again.
+2. [Create a new QR](#create-a-qr-code-from-the-public-url) code matching the new ngrok URL.
 3. Replace the old `qr-code.png` file in the `assets/` folder with the new version of `qr-code.png` file.
 
 The Presentation application automatically checks the `qr-code.png`
@@ -281,13 +295,6 @@ No.
 Ngrok is a default solution here to publish an application running on localhost to the world.
 You can use any other
 service serving the same purpose.
-
-### Is it safe to use the Upload application?
-
-Yes.
-There is no user-sensitive information being stored.
-Also, if set up correctly, the Upload application is running
-over HTTPS.
 
 ### How many users can connect to the Interactive Neural Style Transfer application through the Upload application?
 
