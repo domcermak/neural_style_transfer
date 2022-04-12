@@ -1,7 +1,7 @@
 # Interactive Neural Style Transfer
 
-Interactive Neural Style Transfer application created for the [Noc vědců](https://www.nocvedcu.cz) event is a web
-application designed to interactively present the fast neural style transfer algorithm to the audience.
+Interactive Neural Style Transfer application is a web application designed for the [Noc vědců](https://www.nocvedcu.cz) event
+to interactively present the fast neural style transfer algorithm to the audience.
 
 Neural style transfer algorithm is a method to blend two images into a new one.
 The algorithm extracts visual structure
