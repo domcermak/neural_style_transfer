@@ -137,7 +137,7 @@ Sessions table stores `user` and `presentation` sessions.
 
 #### Scheduled images table
 
-Scheduled images table stores content and style images scheduled for stylization.
+Scheduled images' table stores content and style images scheduled for stylization.
 
 #### Generated images table
 
@@ -145,7 +145,7 @@ Generated images table stores stylized images.
 
 #### Processed images table
 
-Processed images table stores a list of stylized images assigned to each Presentation application session.
+Processed images' table stores a list of stylized images assigned to each Presentation application session.
 This table ensures that all active Presentation application sessions can update its displayed images.
 
 ## Installation and execution
@@ -154,16 +154,15 @@ Run this installation on a PC or laptop connected to internet connection and to 
 
 ### Pre-installation requirements
 
-- PC or laptop connected to a projector (or large monitor),
-- Internet connection,
-- [Docker](https://www.docker.com),
-- [Ngrok](https://ngrok.com/download),
-- [Git](https://git-scm.com),
-- and [Make](https://www.gnu.org/software/make/).
+1. PC or laptop connected to a projector (or large monitor).
+2. Internet connection.
+3. Docker.
+4. Ngrok.
+5. Git.
+6. Make.
 
-Optional:
-
-- Wi-Fi connection for attendants.
+Optionally, you can prepare a Wi-Fi connection for the presentation visitors,
+so they do not need to use their own connection.
 
 #### Docker
 
@@ -204,7 +203,7 @@ and enters the project.
 
 ### Start ngrok to publish the port of the Upload application
 
-Following command executes the `ngrok` binary and publishes the port `8080` on a public DNS.
+The following command executes the `ngrok` binary and publishes the port `8080` on a public DNS.
 
 1. Execute following command in a terminal window.
     ```bash
@@ -260,7 +259,7 @@ and updates it in the web view when there is a new version of the file.
 
 ### What is the Interactive Neural Style Transfer application?
 
-Interactive Neural Style Transfer application created for the [Noc vědců 2021](https://www.nocvedcu.cz) event is a web
+Interactive Neural Style Transfer application created for the [Noc vědců](https://www.nocvedcu.cz) event is a web
 application designed to interactively present the fast neural style transfer algorithm to the audience.
 
 ### What is the Neural Style Transfer algorithm?
@@ -285,13 +284,14 @@ to create a new image.
 ### Do I need a paid tier of ngrok to run the Interactive Neural Style Transfer application?
 
 It depends on your audience.
-The [free tier](https://ngrok.com/pricing) of ngrok allows up to 40 unique connections per
+The free tier of ngrok allows up to 40 unique connections per
 minute.
 You might want to consider a paid version of ngrok if you plan to have more than 40 unique users per minute.
 
 ### Do I need to use ngrok to publish the Upload application?
 
 No.
+
 Ngrok is a default solution here to publish an application running on localhost to the world.
 You can use any other
 service serving the same purpose.
@@ -299,7 +299,9 @@ service serving the same purpose.
 ### How many users can connect to the Interactive Neural Style Transfer application through the Upload application?
 
 This depends a lot on the subscription tier of ngrok.
-The [free tier](https://ngrok.com/pricing) of ngrok allows up to 40 unique connections per minute.
+The free tier of ngrok allows up to 40 unique connections per minute.
+
+If you use a different solution for port publishing than ngrok, refer to the developer of the solution.
 
 ### How many Presentation application sessions can be opened at once in different browser windows?
 
@@ -311,12 +313,12 @@ updates about newly stylized images.
 
 Style images are built-in and available in `./assets/style/` folder. You can extend or replace the list of images.
 
-Style images constraints:
+Style image files have the following constraints:
 
-- Only JPG and JPEG images are supported.
+- Only JPG and JPEG files can be used as style images.
 - At least one style image must be present.
 
-> NOTE: It is recommended to use paintings or drawings as a style images.
+> NOTE: It is recommended to use paintings or drawings as style images.
 > Other kinds of images could result in unpleasant stylization.
 
 ### The page is not accessible after scanning the QR code from the Presentation application. What is the problem?
@@ -324,8 +326,8 @@ Style images constraints:
 The Presentation application runs only on localhost, but the Upload application is published via ngrok on a public IP.
 There might be 2 problems:
 
-- Either ngrok is not running and, therefore the Upload application is not published,
-- or the QR code does not represent the current URL given by ngrok.
+- Either ngrok is not running and, therefore, the Upload application is not published.
+- Or the QR code does not represent the current URL given by ngrok.
 
 To fix the problem:
 
