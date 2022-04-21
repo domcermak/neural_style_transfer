@@ -14,8 +14,8 @@ real-time.
 
 ## TLDR; Fast links
 
-- [QR code generation URL](https://www.qrcode-monkey.com).
-- [Presentation localhost URL](http://localhost:8051).
+- [QR code generation URL](https://www.qrcode-monkey.com)
+- [Presentation localhost URL](http://localhost:8051)
 
 ## Table of contents
 
@@ -217,7 +217,7 @@ The following command executes the `ngrok` binary and publishes the port `8080` 
 
 1. Ensure you copied the URL starting with `https://` given by the [previous step](#start-ngrok-to-publish-the-port-of-the-upload-application).
 2. Generate a new QR code by opening [https://www.qrcode-monkey.com](https://www.qrcode-monkey.com).
-4. Copy the `qr-code.png` file with the QR code downloaded from the [https://www.qrcode-monkey.com](https://www.qrcode-monkey.com) to the `assets/` folder.
+4. Copy the `qr-code.png` file with the QR code to the `assets/` folder.
 
 ### Run the Interactive Neural Style Transfer application
 
@@ -246,11 +246,11 @@ Free tier ngrok session has 2 hours expiration period.
 This means that it stops publishing the port with the Upload application after 2 hours
 and users are no longer able to access the application.
 
-To fix this:
+To fix the problem:
 
-1. Stop (ctrl + c) ngrok and [start it](#start-ngrok-to-publish-the-port-of-the-upload-application) again.
-2. [Create a new QR](#create-a-qr-code-from-the-public-url) code matching the new ngrok URL.
-3. Replace the old `qr-code.png` file in the `assets/` folder with the new version of `qr-code.png` file.
+1. [Restart ngrok](#start-ngrok-to-publish-the-port-of-the-upload-application).
+2. [Create a new QR code from the public URL given by ngrok](#create-a-qr-code-from-the-public-url).
+3. Copy the new `qr-code.png` file to the `assets/` folder.
 
 The Presentation application automatically checks the `qr-code.png`
 and updates it in the web view when there is a new version of the file.
@@ -324,6 +324,7 @@ Style image files have the following constraints:
 ### The page is not accessible after scanning the QR code from the Presentation application. What is the problem?
 
 The Presentation application runs only on localhost, but the Upload application is published via ngrok on a public IP.
+
 There might be 2 problems:
 
 - Either ngrok is not running and, therefore, the Upload application is not published.
@@ -331,8 +332,8 @@ There might be 2 problems:
 
 To fix the problem:
 
-1. Restart ngrok.
-2. Create a new QR code from the public URL given by ngrok.
+1. [Restart ngrok](#start-ngrok-to-publish-the-port-of-the-upload-application).
+2. [Create a new QR code from the public URL given by ngrok](#create-a-qr-code-from-the-public-url).
 3. Copy the new `qr-code.png` file to the `assets/` folder.
 
 The Presentation application automatically checks the `qr-code.png`
